@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  test-docker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: test
+    restart: always
+    ports:
+      - ${PORT_EXTERNAL_DEV}:${PORT_INTERNAL:-8080}
+    networks:
+      - test-network
+volumes:
+  db-data:
+networks:
+  test-network:
+    driver: bridge

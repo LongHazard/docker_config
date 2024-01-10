@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  test-docker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: test
+    restart: always
+    ports:
+      - ${PORT_EXTERNAL_DEV}:${PORT_INTERNAL:-8081}
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+    networks:
+      - test-network
+volumes:
+  db-data:
+networks:
+  test-network:
+    driver: bridge
