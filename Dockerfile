@@ -28,25 +28,37 @@ COPY --from=builder ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
 
-# Stage 4: Create the final image
-FROM eclipse-temurin:17-jre-alpine
-ARG WORKDIR=/opt/app
-WORKDIR ${WORKDIR}
+## Stage 4: Create the final image
+#FROM eclipse-temurin:17-jre-alpine
+#ARG WORKDIR=/opt/app
+#WORKDIR ${WORKDIR}
+#
+## Set the timezone.
+#ENV TZ=Asia/Ho_Chi_Minh
+#RUN set -x \
+#    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+#    && echo $TZ > /etc/timezone
+#
+#RUN addgroup twoup && adduser -S twoup -G twoup
+#RUN chown -R twoup:twoup /opt/app
+#USER twoup
+#
+#COPY --from=extractor ${WORKDIR}/dependencies/ ./
+#COPY --from=extractor ${WORKDIR}/spring-boot-loader/ ./
+#COPY --from=extractor ${WORKDIR}/snapshot-dependencies/ ./
+#COPY --from=extractor ${WORKDIR}/application/ ./
+#ENTRYPOINT ["java", "-XX:+UseG1GC", "org.springframework.boot.loader.launch.JarLauncher"]
+#
+#
+#
+#FROM maven AS build-dependency
+#WORKDIR /opt/app-dev
+#COPY . .
+#RUN mvn clean package -DskipTests
+#
+#FROM openjdk:17-oracle
+#WORKDIR /opt/app-dev
+#COPY --from=build-dependency opt/app-dev/target/*.jar .
+#COPY --from=build-dependency opt/app-dev/target/lib ./lib
 
-# Set the timezone.
-ENV TZ=Asia/Ho_Chi_Minh
-RUN set -x \
-    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone
-
-RUN addgroup twoup && adduser -S twoup -G twoup
-RUN chown -R twoup:twoup /opt/app
-USER twoup
-
-COPY --from=extractor ${WORKDIR}/dependencies/ ./
-COPY --from=extractor ${WORKDIR}/spring-boot-loader/ ./
-COPY --from=extractor ${WORKDIR}/snapshot-dependencies/ ./
-COPY --from=extractor ${WORKDIR}/application/ ./
-ENTRYPOINT ["java", "-XX:+UseG1GC", "org.springframework.boot.loader.launch.JarLauncher"]
-
-
+ENTRYPOINT java -jar /opt/app-dev/*.jar

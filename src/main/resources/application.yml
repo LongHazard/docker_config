@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/test
+    url: jdbc:postgresql://localhost:5432/test_docker1
     username: postgres
     password: postgres
   jpa:
@@ -12,4 +12,5 @@ spring:
       ddl-auto: update
 
 server:
-  port: ${PORT_INTERNAL:8080}
+  port: 8080
+#  port: ${PORT_INTERNAL:8080}
